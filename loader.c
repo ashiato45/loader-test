@@ -14,8 +14,10 @@ typedef void (*func_t)();
 #define Elf_Phdr Elf64_Phdr
 #define Elf_Shdr Elf64_Shdr
 
-#define SHIFT 0x400000
+#define SHIFT 0x000000
 // #define SHIFT 0x00000
+// readelfした結果
+#define DEFAULT_START_POINT 0x400000
 
 // https://smallkirby.hatenablog.com/?page=1560403658
 #define IS_ELF(ehdr)\
@@ -93,7 +95,7 @@ static func_t load_file(char* head){
         
         switch(phdr->p_type){
             case PT_LOAD:
-            fprintf(stderr, " Type:LOAD(%p, %p=%p+%lx, %lx)", SHIFT + (char*)phdr->p_vaddr, head +  phdr->p_offset, 
+            fprintf(stderr, " Type:LOAD(%p@%p, %p=%p+%lx, %lx)", SHIFT + (char*)phdr->p_vaddr, &(phdr->p_vaddr),  head +  phdr->p_offset, 
             head ,  phdr->p_offset, phdr->p_filesz);
             memcpy(SHIFT + (char*)phdr->p_vaddr, head +  phdr->p_offset, phdr->p_filesz);
             fprintf(stderr, " (loaded)\n");
@@ -141,6 +143,7 @@ int main(int argc, char* argv[]){
     fstat(fd, &sb);
     fprintf(stderr, "loading %lx\n", sb.st_size);
     head = mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    fprintf(stderr, "mmapped to %p\n", head);
     f = load_file(head);
     if(f == NULL){
         fprintf(stderr, "fail to load file\n");
