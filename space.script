@@ -48,10 +48,9 @@ SECTIONS
   {
     KEEP (*(SORT_NONE(.init)))
   }
-
   .text           :
   {
-    . += 0x4000000;
+    . += 0x400000;
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)
     *(.text.startup .text.startup.*)
@@ -63,6 +62,7 @@ SECTIONS
     .plt            : { *(.plt) *(.iplt) }
 .plt.got        : { *(.plt.got) }
 .plt.sec        : { *(.plt.sec) }
+
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
