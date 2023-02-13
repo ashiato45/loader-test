@@ -1,0 +1,17 @@
+gcc simple.c -o simple.s  -static -Wall --debug -T elf_x86_64.x2 -O0 -fno-plt -no-pie -S -fno-stack-protector -Wl,-z,norelro -static-pie
+
+
+* 元のコンパイルスクリプトの場所
+./lib/x86_64-linux-gnu/ldscripts/elf_x86_64.x
+
+* セグメント位置をしる(ヘッダリストを表示) / セグメントのRWE属性をしる
+ readelf -l ./loader
+
+ * セグメントを実行可能に変更
+ ./chflg ./loader
+
+ * 対象のコンパイル
+ gcc simple.c -o simple -static -Wall --debug -O0
+
+ * ローダのコンパイル
+ gcc loader.c -o loader -static -Wall --debug -O0 -T space.script
