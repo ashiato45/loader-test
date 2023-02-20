@@ -153,16 +153,26 @@ int main(int argc, char* argv[]){
     fprintf(stderr, "jump to entry point.\n");
 
 #ifdef USE_LOADER_ARGV
+// mukashino
     int* x = &argc;
-    char** y = &argv[1];
+    // char** y = &argv[1];
     // ediにargc-1を積む
-    argc--;
-    asm volatile ("movl %0,%%edi" :: "m"(x));
+    // argc--;
+    // asm volatile ("movl %0,%%edi" :: "m"(x));
     // esiにargv[1]の番地を積む
-    asm volatile ("movl %0,%%esi" :: "m"(y));
+    // asm volatile ("movl %0,%%esi" :: "m"(y));
     // argvの実体ってどこに住んでるんだ？→このmainのスタック中のはず
+
+// 02/17
+    // argv[0] = (char*)(argc - 1);
+    // char** stackp = &argc;
+    // asm volatile ("movl %0,%%esp" :: "m"(x));
+
+    // 0220
+    // rspの様子見た感じ、結局rspは触らないほうがよさそう
 #endif
-    f();
-    // asm volatile ("jmp *%0" :: "m"(f));
+    //f();
+    
+    asm volatile ("jmp *%0" :: "m"(f));
     exit(0);
 }
