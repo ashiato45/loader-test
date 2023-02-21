@@ -15,3 +15,18 @@ gcc simple.c -o simple.s  -static -Wall --debug -T elf_x86_64.x2 -O0 -fno-plt -n
 
  * ローダのコンパイル
  gcc loader.c -o loader -static -Wall --debug -O0 -T space.script
+
+ * おちる直前
+ ```
+ => 0x400ff6 <__libc_start_main+518>:	mov    0x2b7aa3(%rip),%rax        # 0x6b8aa0 <_dl_random>
+pc=0x400ff6, rip=0x400ff6, rdi=0x1002, rax=0x1180, rbx=0x400400, rsp=0xffffde30, rsi=0x6bd880
+0x0000000000400ffd in __libc_start_main ()
+=> 0x400ffd <__libc_start_main+525>:	mov    (%rax),%rax
+pc=0x400ffd, rip=0x400ffd, rdi=0x1002, rax=0xffffe189, rbx=0x400400, rsp=0xffffde30, rsi=0x6bd880
+0x0000000000401000 in __libc_start_main ()
+```
+となっている。この0x6b8aa0というのは、0x2b7aa3と次の0x400ffdとの和になっている。
+この0x6b8aa0の中身(dl_random)が、失敗時には0になっているらしい。
+これを代入しているのはdl_aux_initというところらしい。
+これをもとに調べると https://smallkirby.hatenablog.com/?page=1560668676 が出てくるが解決せず。
+代入しているところがローダ経由だとないので、分岐点を探すと0x44b93dが出てくる。
