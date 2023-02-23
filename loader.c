@@ -154,7 +154,7 @@ int main(int argc, char* argv[]){
 
 #ifdef USE_LOADER_ARGV
 // mukashino
-    int* x = &argc;
+    // void* x = &argc;
     // char** y = &argv[1];
     // ediにargc-1を積む
     // argc--;
@@ -170,6 +170,8 @@ int main(int argc, char* argv[]){
 
     // 0220
     // rspの様子見た感じ、結局rspは触らないほうがよさそう
+    void* x = argv - 1;
+    asm volatile ("mov %0,%%rsp" :: "m"(x));
 #endif
     //f();
     
